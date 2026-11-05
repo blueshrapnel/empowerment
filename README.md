@@ -1,3 +1,12 @@
+> **Fork with two fixes.** This fork of [Mchristos/empowerment](https://github.com/Mchristos/empowerment) corrects:
+>
+> 1. **Blahut-Arimoto mixed exp with log2**, under-reporting capacity on stochastic channels: a binary symmetric channel
+>    with error 0.1 gave 0.323 bits, when the true capacity is 0.531.
+> 2. **Deterministic empowerment sampled 5,000 action sequences** at longer horizons, missing far states. It is now exact,
+>    so `n_samples` has no effect.
+>
+> Numbers computed with the original code will change. Tests: `python -m pytest`.
+
 # Empowerment
 
 ## What is Empowerment?

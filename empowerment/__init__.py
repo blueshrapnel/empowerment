@@ -19,23 +19,17 @@ def compute_empowerment(T, det, n_step, state, n_samples=1000, epsilon = 1e-6):
         Determines the "time horizon" of the empowerment computation. The computed empowerment is
         the influence the agent has on the future over an n_step time horizon. 
     n_samples : int
-        Number of samples for approximating the empowerment in the deterministic case.
+        Unused, kept for compatibility: the deterministic case is now exact.
     state : int 
         State for which to compute the empowerment.
     """
     n_states, n_actions, _  = T.shape
     if det:
-        # only sample if too many actions sequences to iterate through
-        if n_actions**n_step < 5000:
-            nstep_samples = np.array(list(itertools.product(range(n_actions), repeat = n_step)))
-        else:
-            nstep_samples = np.random.randint(0,n_actions, [n_samples,n_step] )
-        # fold over each nstep actions, get unique end states
-        tmap = lambda s, a : np.argmax(T[:,a,s]) 
-        seen = set()
-        for i in range(len(nstep_samples)):
-            aseq = nstep_samples[i,:]
-            seen.add(reduce(tmap, [state,*aseq]))
+        # exact: expand the set of states reachable in exactly n_step steps. Sampling
+        # action sequences misses far states, so it under-reports empowerment.
+        seen = {state}
+        for _ in range(n_step):
+            seen = {int(np.argmax(T[:,a,s])) for s in seen for a in range(n_actions)}
         # empowerment = log # of reachable states 
         return np.log2(len(seen))
     else:

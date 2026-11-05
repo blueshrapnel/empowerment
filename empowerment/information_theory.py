@@ -91,7 +91,8 @@ def blahut_arimoto(P_yx, epsilon = 0.001, deterministic = False):
         while T > epsilon:
             # update PHI
             PHI_yx = (P_yx*q_x.reshape(1,-1))/(P_yx @ q_x).reshape(-1,1)
-            r_x = np.exp(np.sum(P_yx*log2(PHI_yx), axis=0))
+            # base 2, to match log2: np.exp here under-reports capacity
+            r_x = np.power(2.0, np.sum(P_yx*log2(PHI_yx), axis=0))
             # channel capactiy 
             C = log2(np.sum(r_x))
             # check convergence 
